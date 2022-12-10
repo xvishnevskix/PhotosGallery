@@ -8,13 +8,26 @@ import axios from "axios";
 function App() {
 
     const [collections, setCollections] = React.useState([])
+    const [searchValue, setSearchValue] = React.useState('')
+    const [categoryId, setCategoryId] = React.useState(0)
+    const [page, setPage] = React.useState(1)
+
+    const cats = [
+            { "name": "Все" },
+            { "name": "Море" },
+            { "name": "Горы" },
+            { "name": "Архитектура" },
+            { "name": "Города" }
+        ]
 
     useEffect( () => {
             fetchPhotos()
-    }, [])
+    }, [categoryId, page])
 
     async function fetchPhotos() {
-        const response = await axios.get(`https://6311b8dd19eb631f9d779584.mockapi.io/photos`)
+        const category = categoryId ? `category=${categoryId}` : ''
+        const pagePara = page ? `page=${categoryId}` : ''
+        const response = await axios.get(`https://6311b8dd19eb631f9d779584.mockapi.io/photos?${category}&page=${page}&limit=3`)
 
         setCollections(response.data)
     }
@@ -24,17 +37,22 @@ function App() {
       <h1>Моя коллекция фотографий</h1>
       <div className="top">
         <ul className="tags">
-          <li className="active">Все</li>
-          <li>Горы</li>
-          <li>Море</li>
-          <li>Архитектура</li>
-          <li>Города</li>
+            {cats.map((obj, index) => (
+                <li onClick={() => setCategoryId(index)}
+                    key={index}
+                    className={categoryId === index ? "active" : ""} >{obj.name}</li>
+            ))}
         </ul>
-        <input className="search-input" placeholder="Поиск по названию" />
+        <input
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            className="search-input"
+            placeholder="Поиск по названию" />
+
       </div>
       <div className="content">
           {collections.filter((obj) => {
-
+              return obj.name.toLowerCase().includes(searchValue.toLowerCase())
           }).
           map((obj, index) => (
               <Collection
@@ -47,9 +65,14 @@ function App() {
           )}
       </div>
       <ul className="pagination">
-        <li>1</li>
-        <li className="active">2</li>
-        <li>3</li>
+          {
+              [... Array(3)].map((_, i) => (
+
+                  <li onClick={() => setPage(i+1)}
+                      key={i}
+                      className={page === i + 1 ? 'active' : ''}>{i+ 1}</li>
+              ))
+          }
       </ul>
     </div>
   );
