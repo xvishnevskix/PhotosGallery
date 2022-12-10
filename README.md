@@ -1,6 +1,4 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Demo: https://photos-gallery-umber.vercel.app
 
 ## Available Scripts
 
